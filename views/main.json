@@ -1,0 +1,14 @@
+{
+	"style": {
+		"background-color": "#6f6f6f",
+		"border": 2,
+		"overflow":"auto"
+	},
+
+	"contents": [
+		{
+			"name": "container",
+			"control": "HLayout"
+		}
+	]
+}
