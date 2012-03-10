@@ -1,11 +1,16 @@
 var _ = require('common/util');
 var TextView = require('ui').TextView;
+var VLayout = require('ui').VLayout;
+var Control = require('ui').Control;
 var config = require('../lib/config');
 var app = this;
 
 _.extend(exports, {
 	':load': function() {
 		var self = this; 
+        self.style({
+            'background-color': config.backColor
+        });
 		var wait = new TextView({
 			"label": config.waitText,
 			"style": {
@@ -33,9 +38,35 @@ _.extend(exports, {
 			if(action === 'getMenu'){
 				clearInterval(self.intervalId);
 				delete self.intervalId;
-				
+                
+                self.clear();
+                
+                var title = new TextView({
+                    label: config.poweredBy,
+                    style: {
+                        color: 'white',
+                        'font-size': 'small',
+                        'font-weight': 'normal',
+                        border: '0 0 4 0'
+                    }
+                });
+                
+                var parent = new VLayout({
+                    style: {
+                        width: 'fill-parent'
+                    }
+                });
+                var control = new Control({
+                    style: {
+                        width: 'fill-parent'
+                    }
+                });
+                parent.add(control);
+                parent.add(title);
+                
+                self.add('title', parent);
+                
 				var i = 1;
-				self.clear();
 				param.lists.forEach(function(item){
 					var temp;
 					if (i % 2 === 0){
