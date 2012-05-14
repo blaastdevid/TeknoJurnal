@@ -9,7 +9,7 @@ var sys = require('sys');
 var config = require('./lib/config');
 
 var rssUrl = config.rssURL;
- 
+
 var debug = config.debug;
 
 function DB() {
@@ -35,10 +35,10 @@ DB.prototype = {
     }
 };
 
-function RSSContentAPI(){
+function TeknoJurnalAPI(){
 }
 
-RSSContentAPI.prototype = {
+TeknoJurnalAPI.prototype = {
     jsdomRequest: function(url, cb){
         var r = rlog.start(url);
         jsdom.env(url,
@@ -52,7 +52,7 @@ RSSContentAPI.prototype = {
         );
     },
     parseContent: function(window, cb) {
-        var body = window.$(config.contentKey).text().trim().split(config.splitString)[0].split(config.splitString2)[0].trim();
+        var body = window.$(config.contentKey).text().trim().split(config.splitString)[0];
         if (debug) {
             console.log(body);
         }
@@ -64,7 +64,6 @@ RSSContentAPI.prototype = {
     menuRequest: function(cb) {
         var self = this;
         var data = [];
-        var keyURL = [];
         var handler = new rssparser.RssHandler( function (error, dom) {
             if (error) {
                 console.log(error);
@@ -73,27 +72,18 @@ RSSContentAPI.prototype = {
                 if (debug) {
                     sys.puts('Raw Data: ' + sys.inspect(dom, false, null));
                 }
-                _.each(dom.items, function(param) {
+                _.each(dom.items, function(param){
                     if (debug) {
                         console.log('Id: ' + param.id);
-                        console.log('Title: ' + param.title); 
+                        console.log('Title: ' + param.title);
                         console.log('Pub Date: ' + param.pubDate);
                         console.log('Link: ' + param.link);
                         console.log('Description : ' + param.description);
                         console.log('########################################');
                     }
-                    api.data.store('link', param.link, {title: param.title, url: param.link});
                     data.push({title: param.title, url: param.link});
-                    keyURL.push(param.link);
                 });
-                api.data.getDoc('link', function(contents){
-                    _.each(contents, function(item, key) {
-                        if(key.charAt(0) !== '_' && ! _.include(keyURL, key)) {
-                            data.push(item);
-                        }
-                    });
-                    cb(null, data);
-                });
+                cb(null, data);
             }
         });
         var parser = new rssparser.Parser(handler);
@@ -117,13 +107,13 @@ RSSContentAPI.prototype = {
     }
 };
 
-function RSSContentUser(client, api){
+function TeknoJurnalUser(client, api){
     this.client = client;
     this.api = api;
     this.db = new DB();
 }
 
-RSSContentUser.prototype = {
+TeknoJurnalUser.prototype = {
     getMenu: function(args){
         var self = this;
         this.api.menuRequest(function(err, lists){
@@ -147,9 +137,9 @@ RSSContentUser.prototype = {
 
 app.message(function(client, action, param){
    var self = this;
-   if (action.length > 0 && RSSContentUser.prototype.hasOwnProperty(action)) {
+   if (action.length > 0 && TeknoJurnalUser.prototype.hasOwnProperty(action)) {
         app.debug(client.header() + ' action="' + action + '"');
-        var user = new RSSContentUser(client, new RSSContentAPI());
+        var user = new TeknoJurnalUser(client, new TeknoJurnalAPI());
         user[action].apply(user, [param]);
     } else {
         app.debug(client.header() + ' unknown-action="' + action + '"');

@@ -39,8 +39,7 @@ _.extend(exports, {
 	
 	':state': function(param) {
 		var self = this;
-        self.sct = 0;
-		self.scrollTop(0);
+        self.scrollTop(0);
 		self.get('title').label(' ');
 		self.get('content').label(config.waitText);
 		self.intervalId = setInterval(function() {

@@ -1,7 +1,4 @@
 {
 	"name": "Tekno Jurnal",
-	"default-view": "main",
-    "deps": {
-    	"data": "com.blaast.api.Data"
-	}
+	"default-view": "main"
 }
